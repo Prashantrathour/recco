@@ -5,28 +5,37 @@ import { Popup } from "./Popup";
 import { useDispatch, useSelector } from "react-redux";
 import { getData, updateData } from "../Redux/action/dataActions";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import EditProductModal from "./EditProductModal ";
 function Table({ data }) {
-  const { isLoading, isError } = useSelector((store) => store);
-
+  const { isLoading, isError } = useSelector((store) => store.productreducer);
+const [ischeck,setcheck]=useState(false)
   const [popupOpen, setPopupOpen] = useState(false);
   const [productid, setid] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editdata,seteditdata]=useState({})
   const dispatch = useDispatch();
   const openPopup = () => {
     setPopupOpen(true);
   };
-
+function onClose(){
+  setIsModalOpen(false)
+  
+}
   const closePopup = () => {
     setPopupOpen(false);
   };
   const checkhandle = (id) => {
+    setid(id)
+    setcheck(true)
     dispatch(updateData(id, { currentStatus: "Approved" }));
   };
   const crosshandle = (id) => {
     setid(id);
-
+setcheck(false)
     openPopup();
   };
   const getstatus = async (id, status) => {
+    setid(id)
     closePopup();
     try {
       let res = await dispatch(
@@ -38,10 +47,10 @@ function Table({ data }) {
       alert("Something went wrong");
     }
   };
-  if (!data) {
-    return <p>Loading...</p>;
+  if (!data.length>0) {
+    return <p className="text-2xl font-bold  py-2">loading...</p>;
   }
-  console.log(data)
+ 
   return (
     <div>
       <section className="bg-gray-50 dark:bg-gray-900 py-3 sm:py-5">
@@ -110,10 +119,10 @@ function Table({ data }) {
                   {data &&
                     data?.map((item) => {
                       return (
-                        <tr className="border-b-2 dark:border-gray-900 hover:bg-gray-300 dark:hover:bg-gray-700 py-2 p-4">
+                        <tr className="border-b-2 dark:border-gray-900 hover:bg-gray-300 dark:hover:bg-gray-300 py-2 p-4 text-gray-500">
                           <th
                             scope="row"
-                            className="flex items-center px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                            className="flex items-center px-4 py-2 font-medium  whitespace-nowrap dark:text-white"
                           >
                             <img
                               src={item.image}
@@ -123,29 +132,29 @@ function Table({ data }) {
                             {item.groceryName}
                           </th>
                           <td className="px-4 py-2">
-                            <span className="text-xs font-medium px-2 py-0.5 ">
+                            <span className="text-medium font-medium px-2 py-0.5 ">
                               {item.brand}
                             </span>
                           </td>
-                          <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                          <td className="px-4 py-2 font-medium  whitespace-nowrap dark:text-white">
                             <div className="flex items-center">
                               $ {item.price}/6+1LB
                             </div>
                           </td>
-                          <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                          <td className="px-4 py-2 font-medium  whitespace-nowrap dark:text-white">
                             {item.quantity}X 6+1LB
                           </td>
-                          <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                          <td className="px-4 py-2 font-medium  whitespace-nowrap dark:text-white">
                             ${item.total}
                           </td>
 
-                          <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                          <td className="px-4 py-2 font-medium  whitespace-nowrap dark:text-white">
                             <div className="flex justify-between gap-3">
                               {item.currentStatus == "false" ? (
                                 <span className="w-28"></span>
                               ) : (
                                 <span
-                                  className={`w-28 items-center text-center rounded-2xl ${
+                                  className={`w-32 items-center text-center text-sm rounded-2xl ${
                                     item.currentStatus == "Approved"
                                       ? "bg-green-500"
                                       : item.currentStatus === "Missing"
@@ -162,40 +171,52 @@ function Table({ data }) {
                                 onClick={() => checkhandle(item.id)}
                                 className={`text-lg font-bold cursor-pointer ${
                                   item.currentStatus == "Approved"
-                                  ? "text-green-500"
-                                  : item.currentStatus === "Missing"
-                                  ? "text-red-500"
-                                  : item.currentStatus === "Missing Urgent"
-                                  ? "text-red-700"
-                                  : "text-green-700"
+                                  ? "text-green-500 font-extrabold"
+                                  // : item.currentStatus === "Missing"
+                                  // ? "text-red-500"
+                                  // : item.currentStatus === "Missing Urgent"
+                                  // ? "text-red-700"
+                                  : "text-gray-400"
                                 }`}
                               >
-                                {!isLoading ? (
-                                  <BiCheck className="text-2xl font-extrabold" />
-                                ) : (
+                                {isLoading&&productid==item.id&&ischeck  ? (
                                   <div className="animate-spin min-w-max">
                                     <AiOutlineLoading3Quarters className="text-2xl font-extrabold" />
                                   </div>
+                                  ) : (
+                                  <BiCheck className="text-2xl font-extrabold" />
                                 )}
                               </span>
                               <span
                                 onClick={() => crosshandle(item.id)}
                                 className={`text-lg font-bold cursor-pointer ${
                                   item.currentStatus !== "Approved" &&
-                                  item.currentStatus != "false"
-                                    ? "text-red-700"
+                                  item.currentStatus != "false"&&item.currentStatus=="Missing"
+                                    ? "text-red-500"
+                      
+                                  : item.currentStatus === "Missing Urgent"
+                                  ? "text-red-700"
                                     : "text-gray-400"
                                 }`}
                               >
-                                {!isLoading ? (
-                                  <MdClose className="text-2xl font-extrabold" />
-                                ) : (
-                                  <div className="animate-spin">
+                               
+                                {isLoading&&productid==item.id&&!ischeck  ? (
+                                  <div className="animate-spin min-w-max">
                                     <AiOutlineLoading3Quarters className="text-2xl font-extrabold" />
                                   </div>
+                                  ) : (
+                                  <MdClose className="text-2xl font-extrabold" />
                                 )}
                               </span>
-                              <span className="hover:underline cursor-pointer">
+                              <span onClick={() => {
+                                setIsModalOpen(true)
+                                seteditdata({...item})
+                              }
+                                
+                                  
+                                
+                                
+                                } className="hover:underline cursor-pointer">
                                 Edit
                               </span>
                             </div>
@@ -216,6 +237,23 @@ function Table({ data }) {
         isOpen={popupOpen}
         closePopup={closePopup}
       />
+        <div>
+ 
+
+      {isModalOpen && (
+        <EditProductModal
+          {...editdata}
+          onClose={onClose}
+          onUpdateProduct={(id,newQuantity) => {
+            setid(id)
+            
+            
+            dispatch(updateData(id, newQuantity))
+            setIsModalOpen(false); // Close the modal after updating
+          }}
+        />
+      )}
+    </div>
     </div>
   );
 }

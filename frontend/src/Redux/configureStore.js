@@ -1,10 +1,10 @@
 // configureStore.js
-import {legacy_createStore,applyMiddleware} from "redux"
+import {legacy_createStore,applyMiddleware,combineReducers} from "redux"
 
 import {thunk} from "redux-thunk"
-import { reducer } from "./reducer/reducer";
+import { reducer as productreducer } from "./reducer/reducer";
 export const store = legacy_createStore(
-   reducer,applyMiddleware(thunk)
+   combineReducers({productreducer}),applyMiddleware(thunk)
 );
 
 export default store;

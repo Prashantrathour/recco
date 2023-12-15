@@ -12,7 +12,7 @@ import { RiRestaurantFill } from "react-icons/ri";
 import Table from "../components/Table";
 function Home() {
   const dispatch = useDispatch();
-  const {data} = useSelector((store) => store);
+  const {data} = useSelector((store) => store.productreducer);
   
   useEffect(() => {
     dispatch(getData);

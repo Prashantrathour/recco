@@ -10,10 +10,13 @@ export const reducer =(state=initialState,{type,payload})=>{
       case "GET_SUCCESS":
         return {...state,isLoading:false,data:payload}
       case "UPDATE_SUCCESS":
-        const {id,currentStatus}=payload
+        const {id,currentStatus,price,quantity,total}=payload
         let mapeddata=state?.data?.map((item)=>{
           if(item.id==id){
             item.currentStatus=currentStatus
+            item.total=total
+            item.price=price
+            item.quantity=quantity
           }
           return item
         })

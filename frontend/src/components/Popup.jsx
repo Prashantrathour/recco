@@ -18,13 +18,13 @@ export const Popup = ({ isOpen, closePopup,productid,data,getstatus }) => {
             <AiOutlineClose />
           </button>
         </div>
-        <p  className="text-left">{Product?.groceryName||"NA"}...id Urgent ?</p>
+        <p  className="text-left">Is '{Product?.groceryName||"NA"}' Urgent ?</p>
         <div className="flex justify-end mt-4">
-          <button onClick={()=>getstatus(productid,true)} className="mr-2 px-4 py-2 bg-blue-500 text-white rounded">
+          <button onClick={()=>getstatus(productid,true)} className="mr-2 px-4 py-2 ">
             Yes
           </button>
           <button
-            className="px-4 py-2 border border-gray-300 rounded"
+            className="px-4 py-2  "
             onClick={()=>getstatus(productid,false)}
           >
             No
