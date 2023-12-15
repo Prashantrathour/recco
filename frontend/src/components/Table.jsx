@@ -2,29 +2,46 @@ import React, { useState } from "react";
 import { BiCheck, BiPrinter, BiSearch } from "react-icons/bi";
 import { MdClose } from "react-icons/md";
 import { Popup } from "./Popup";
-
+import { useDispatch, useSelector } from "react-redux";
+import { getData, updateData } from "../Redux/action/dataActions";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 function Table({ data }) {
-    const [popupOpen, setPopupOpen] = useState(false);
-    const [productid,setid]=useState(1)
-    const openPopup = () => {
-      setPopupOpen(true);
-    };
-  
-    const closePopup = () => {
-      setPopupOpen(false);
-    };
+  const { isLoading, isError } = useSelector((store) => store);
+
+  const [popupOpen, setPopupOpen] = useState(false);
+  const [productid, setid] = useState(1);
+  const dispatch = useDispatch();
+  const openPopup = () => {
+    setPopupOpen(true);
+  };
+
+  const closePopup = () => {
+    setPopupOpen(false);
+  };
   const checkhandle = (id) => {
-    alert(id);
+    dispatch(updateData(id, { currentStatus: "Approved" }));
   };
   const crosshandle = (id) => {
-    setid(id)
-    openPopup()
-   
+    setid(id);
+
+    openPopup();
   };
-  const getstatus=(status)=>{
-        console.log(status)
-        closePopup()
+  const getstatus = async (id, status) => {
+    closePopup();
+    try {
+      let res = await dispatch(
+        updateData(id, {
+          currentStatus: !status ? "Missing" : "Missing Urgent",
+        })
+      );
+    } catch (error) {
+      alert("Something went wrong");
+    }
+  };
+  if (!data) {
+    return <p>Loading...</p>;
   }
+  console.log(data)
   return (
     <div>
       <section className="bg-gray-50 dark:bg-gray-900 py-3 sm:py-5">
@@ -90,79 +107,115 @@ function Table({ data }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {data.map((item) => {
-                    return (
-                      <tr className="border-b-2 dark:border-gray-900 hover:bg-gray-300 dark:hover:bg-gray-700 py-2 p-4">
-                        <th
-                          scope="row"
-                          className="flex items-center px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                        >
-                          <img
-                            src={item.image}
-                            alt="iMac Front Image"
-                            className="w-auto h-10 mr-3 p-2"
-                          />
-                          {item.groceryName}
-                        </th>
-                        <td className="px-4 py-2">
-                          <span className="text-xs font-medium px-2 py-0.5 ">
-                            {item.brand}
-                          </span>
-                        </td>
-                        <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                          <div className="flex items-center">
-                            $ {item.price}/6+1LB
-                          </div>
-                        </td>
-                        <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                          {item.quantity}X 6+1LB
-                        </td>
-                        <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                          ${item.total}
-                        </td>
+                  {data &&
+                    data?.map((item) => {
+                      return (
+                        <tr className="border-b-2 dark:border-gray-900 hover:bg-gray-300 dark:hover:bg-gray-700 py-2 p-4">
+                          <th
+                            scope="row"
+                            className="flex items-center px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                          >
+                            <img
+                              src={item.image}
+                              alt="iMac Front Image"
+                              className="w-auto h-10 mr-3 p-2"
+                            />
+                            {item.groceryName}
+                          </th>
+                          <td className="px-4 py-2">
+                            <span className="text-xs font-medium px-2 py-0.5 ">
+                              {item.brand}
+                            </span>
+                          </td>
+                          <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            <div className="flex items-center">
+                              $ {item.price}/6+1LB
+                            </div>
+                          </td>
+                          <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            {item.quantity}X 6+1LB
+                          </td>
+                          <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            ${item.total}
+                          </td>
 
-                        <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                          <div className="flex justify-between gap-3">
-                            {item.currentStatus == "false" ? (
-                              <span className="w-24"></span>
-                            ) : (
-                              <span className={`w-24 items-center text-center rounded-2xl ${
-                                item.currentStatus == "Approved"
-                                  ? "bg-green-600"
-                                  : item.currentStatus!== "Approved"?"bg-red-700":"bg-gray-700"
-                              } text-white`}>{item.currentStatus}</span>
-                            )}
-                            <span
-                              onClick={() => checkhandle(item.id)}
-                              className={`text-lg font-bold cursor-pointer ${
-                                item.currentStatus == "Approved"
-                                  ? "text-green-600"
-                                  : "text-gray-400"
-                              }`}
-                            >
-                              <BiCheck className="text-2xl font-extrabold" />
-                            </span>
-                            <span
-                              onClick={() => crosshandle(item.id)}
-                              className={`text-lg font-bold cursor-pointer ${item.currentStatus!== "Approved"&&item.currentStatus!="false"?"text-red-700":"text-gray-400"}`}
-                            >
-                              <MdClose />
-                            </span>
-                            <span className="hover:underline cursor-pointer">
-                              Edit
-                            </span>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                          <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            <div className="flex justify-between gap-3">
+                              {item.currentStatus == "false" ? (
+                                <span className="w-28"></span>
+                              ) : (
+                                <span
+                                  className={`w-28 items-center text-center rounded-2xl ${
+                                    item.currentStatus == "Approved"
+                                      ? "bg-green-500"
+                                      : item.currentStatus === "Missing"
+                                      ? "bg-red-500"
+                                      : item.currentStatus === "Missing Urgent"
+                                      ? "bg-red-700"
+                                      : "bg-green-700"
+                                  } text-white`}
+                                >
+                                  {item.currentStatus}
+                                </span>
+                              )}
+                              <span
+                                onClick={() => checkhandle(item.id)}
+                                className={`text-lg font-bold cursor-pointer ${
+                                  item.currentStatus == "Approved"
+                                  ? "text-green-500"
+                                  : item.currentStatus === "Missing"
+                                  ? "text-red-500"
+                                  : item.currentStatus === "Missing Urgent"
+                                  ? "text-red-700"
+                                  : "text-green-700"
+                                }`}
+                              >
+                                {!isLoading ? (
+                                  <BiCheck className="text-2xl font-extrabold" />
+                                ) : (
+                                  <div className="animate-spin min-w-max">
+                                    <AiOutlineLoading3Quarters className="text-2xl font-extrabold" />
+                                  </div>
+                                )}
+                              </span>
+                              <span
+                                onClick={() => crosshandle(item.id)}
+                                className={`text-lg font-bold cursor-pointer ${
+                                  item.currentStatus !== "Approved" &&
+                                  item.currentStatus != "false"
+                                    ? "text-red-700"
+                                    : "text-gray-400"
+                                }`}
+                              >
+                                {!isLoading ? (
+                                  <MdClose className="text-2xl font-extrabold" />
+                                ) : (
+                                  <div className="animate-spin">
+                                    <AiOutlineLoading3Quarters className="text-2xl font-extrabold" />
+                                  </div>
+                                )}
+                              </span>
+                              <span className="hover:underline cursor-pointer">
+                                Edit
+                              </span>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
                 </tbody>
               </table>
             </div>
           </div>
         </div>
       </section>
-      <Popup productid={productid} data={data} getstatus={getstatus} isOpen={popupOpen} closePopup={closePopup} />
+      <Popup
+        productid={productid}
+        data={data}
+        getstatus={getstatus}
+        isOpen={popupOpen}
+        closePopup={closePopup}
+      />
     </div>
   );
 }

@@ -1,1 +1,1 @@
-export const api="https://boloformapi.onrender.com/form"
+export const api="https://api-ex7s.onrender.com/"

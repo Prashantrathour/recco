@@ -13,7 +13,7 @@ import Table from "../components/Table";
 function Home() {
   const dispatch = useDispatch();
   const {data} = useSelector((store) => store);
-  console.log(data);
+  
   useEffect(() => {
     dispatch(getData);
   }, []);

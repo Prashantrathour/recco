@@ -3,11 +3,13 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 
 import axios from "axios"
 import { api } from '../../services/api';
-import { data } from '../../data';
+
 export const getData =  async (dispatch) => {
     dispatch(request())
     try {
-        dispatch(get_success(data))
+        const res=await axios.get(api+"products")
+      
+        dispatch(get_success(res.data))
     } catch (error) {
        dispatch(fail()) 
     }
@@ -16,9 +18,14 @@ export const getData =  async (dispatch) => {
 export const updateData =  (id,data)=>async (dispatch) => {
     dispatch(request())
     try {
-        dispatch(get_success(data))
+     
+        const res=await axios.patch(api+"products/"+id,data)
+       
+        dispatch(update_success(res.data))
+        return res
     } catch (error) {
        dispatch(fail()) 
+       return error
     }
  
 }

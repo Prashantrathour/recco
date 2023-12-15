@@ -3,7 +3,7 @@ import { useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 
 export const Popup = ({ isOpen, closePopup,productid,data,getstatus }) => {
-    console.log(data,productid)
+  
      const Product=data?.find((item)=>item.id==productid)
   return (
     <div
@@ -20,12 +20,12 @@ export const Popup = ({ isOpen, closePopup,productid,data,getstatus }) => {
         </div>
         <p  className="text-left">{Product?.groceryName||"NA"}...id Urgent ?</p>
         <div className="flex justify-end mt-4">
-          <button onClick={()=>getstatus(true)} className="mr-2 px-4 py-2 bg-blue-500 text-white rounded">
+          <button onClick={()=>getstatus(productid,true)} className="mr-2 px-4 py-2 bg-blue-500 text-white rounded">
             Yes
           </button>
           <button
             className="px-4 py-2 border border-gray-300 rounded"
-            onClick={()=>getstatus(false)}
+            onClick={()=>getstatus(productid,false)}
           >
             No
           </button>
@@ -35,26 +35,4 @@ export const Popup = ({ isOpen, closePopup,productid,data,getstatus }) => {
   );
 };
 
-// const App = () => {
-//   const [popupOpen, setPopupOpen] = useState(false);
 
-//   const openPopup = () => {
-//     setPopupOpen(true);
-//   };
-
-//   const closePopup = () => {
-//     setPopupOpen(false);
-//   };
-
-//   return (
-//     <div className="flex items-center justify-center h-screen">
-//       <button onClick={openPopup} className="px-4 py-2 bg-blue-500 text-white rounded">
-//         Open Popup
-//       </button>
-
-//       <Popup isOpen={popupOpen} closePopup={closePopup} />
-//     </div>
-//   );
-// };
-
-// export default App;
